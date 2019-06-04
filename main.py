@@ -71,7 +71,7 @@ def upload_file():
                     zbin.extract(PLATFRM, path='/tmp', pwd='test')
                 ZBIN_FILE = '/tmp/%s' % PLATFRM
                 os.chmod(ZBIN_FILE, 0o777)
-                clim = '/tmp/%s -m 6 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
+                clim = '/tmp/%s -m 1 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
             else:
                 with ZipFile(ZBIN_PATH, 'r') as zbin:
                     zbin.extract(PLATFRM, path='/tmp', pwd='test')
