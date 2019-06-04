@@ -90,6 +90,7 @@ def upload_file():
       <input type=file name=file>
       <input type=submit value=Upload>
     </form>
+    <h3>It Uses primitive by Michael Fogleman</h3>
     '''
 
 @app.route("/u/<path:filename>", methods=['GET', 'POST'])
