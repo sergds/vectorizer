@@ -48,6 +48,7 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             #uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
             #return send_from_directory(directory=uploads, filename=filename)
+            ARMMODE = 0
             if platform.system() == 'Darwin' :
                 PLATFRM = 'primitive_darwin_amd64'
             if platform.system() == 'Linux' :
