@@ -56,6 +56,8 @@ def upload_file():
                 PLATFRM = 'primitive_windows_amd64.exe'
             if platform.machine() == 'arm' :
                 PLATFRM = 'primitive_linux_arm'
+            if platform.machine() == 'armv7l' :
+                PLATFRM = 'primitive_linux_arm'
             if platform.machine() == 'aarch64' :
                 PLATFRM = 'primitive_linux_arm64'
             clim = '%s/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PRIM_EXEC_PATH, PLATFRM, filename)
