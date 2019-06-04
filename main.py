@@ -3,6 +3,8 @@ import time
 from flask import Flask, flash, request, redirect, send_from_directory
 from werkzeug.utils import secure_filename
 import platform
+import zipfile
+from zipfile import ZipFile
 
 rp = os.path.realpath(__file__)
 dirn = os.path.dirname(rp)
@@ -19,8 +21,8 @@ os.system('rm -rf %s/uploads/*' % dirn)
 print('Lc: Done.')
 print('Lc: Initializing app...')
 
-
-PRIM_EXEC_PATH = '%s/bin' % dirn
+# SETTINGS
+ZBIN_PATH = '%s/Z.bin' % dirn
 UPLOAD_FOLDER = '%s/uploads' % dirn
 ensure_dir(UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -65,11 +67,20 @@ def upload_file():
                 ARMMODE = 1
                 PLATFRM = 'primitive_linux_arm64'
             if ARMMODE == 1:
-                clim = '%s/%s -m 6 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (PRIM_EXEC_PATH, PLATFRM, filename)
+                with ZipFile(ZBIN_PATH, 'r') as zbin:
+                    zbin.extract(PLATFRM, path='/tmp', pwd='test')
+                ZBIN_FILE = '/tmp/%s' % PLATFRM
+                os.chmod(ZBIN_FILE, 0o777)
+                clim = '/tmp/%s -m 6 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
             else:
-                clim = '%s/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PRIM_EXEC_PATH, PLATFRM, filename)
+                with ZipFile(ZBIN_PATH, 'r') as zbin:
+                    zbin.extract(PLATFRM, path='/tmp', pwd='test')
+                ZBIN_FILE = '/tmp/%s' % PLATFRM
+                os.chmod(ZBIN_FILE, 0o777)
+                clim = '/tmp/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
             #print(clim)
             os.system(clim)
+            os.remove(ZBIN_FILE)
             return redirect("/u/tmp.png")
     return '''
     <!doctype html>
