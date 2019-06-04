@@ -1,6 +1,6 @@
 import os
 import time
-from flask import Flask, flash, request, redirect, url_for, send_from_directory
+from flask import Flask, flash, request, redirect, send_from_directory
 from werkzeug.utils import secure_filename
 import platform
 
@@ -46,7 +46,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+            #uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
             #return send_from_directory(directory=uploads, filename=filename)
             if platform.system() == 'Darwin' :
                 PLATFRM = 'primitive_darwin_amd64'
@@ -65,7 +65,8 @@ def upload_file():
                 PLATFRM = 'primitive_linux_arm64'
             if ARMMODE == 1:
                 clim = '%s/%s -m 6 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (PRIM_EXEC_PATH, PLATFRM, filename)
-            clim = '%s/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PRIM_EXEC_PATH, PLATFRM, filename)
+            else:
+                clim = '%s/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PRIM_EXEC_PATH, PLATFRM, filename)
             #print(clim)
             os.system(clim)
             return redirect("/u/tmp.png")
