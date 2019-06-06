@@ -1,0 +1,14 @@
+{
+  "name": "Vectorizer",
+  "description": "V3000",
+  "image": "heroku/python",
+  "repository": "https://github.com/sergds/vectorizer",
+  "keywords": ["python", "flask" ],
+  "addons": [ "heroku-postgresql" ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "The secret key for the Django application.",
+      "generator": "secret"
+    }
+  }
+}
