@@ -98,4 +98,4 @@ def download(filename):
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(directory=uploads, filename=filename)
 print('Lc: Running app...')
-app.run(host='0.0.0.0', port=3000)
+app.run(host='0.0.0.0', port=5000)
