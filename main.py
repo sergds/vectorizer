@@ -77,7 +77,7 @@ def upload_file():
                     zbin.extract(PLATFRM, path='/tmp', pwd='test')
                 ZBIN_FILE = '/tmp/%s' % PLATFRM
                 os.chmod(ZBIN_FILE, 0o777)
-                clim = '/tmp/%s -m 0 -v -n 220 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
+                clim = '/tmp/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
             #print(clim)
             os.system(clim)
             os.remove(ZBIN_FILE)
@@ -98,4 +98,4 @@ def download(filename):
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(directory=uploads, filename=filename)
 print('Lc: Running app...')
-app.run(host='0.0.0.0', port=3000)
+app.run(host='0.0.0.0')
