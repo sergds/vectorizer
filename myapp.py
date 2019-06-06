@@ -22,7 +22,7 @@ print('Lc: Done.')
 print('Lc: Initializing app...')
 
 # SETTINGS
-ZBIN_PATH = '%s/Z.bin' % dirn
+BIN_PATH = '%s/bin' % dirn
 UPLOAD_FOLDER = '%s/uploads' % dirn
 ensure_dir(UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -67,20 +67,20 @@ def upload_file():
                 ARMMODE = 1
                 PLATFRM = 'primitive_linux_arm64'
             if ARMMODE == 1:
-                with ZipFile(ZBIN_PATH, 'r') as zbin:
-                    zbin.extract(PLATFRM, path='/tmp', pwd='test')
-                ZBIN_FILE = '/tmp/%s' % PLATFRM
-                os.chmod(ZBIN_FILE, 0o777)
-                clim = '/tmp/%s -m 1 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
+                #with ZipFile(ZBIN_PATH, 'r') as zbin:
+                #    zbin.extract(PLATFRM, path='/tmp', pwd='test')
+                #ZBIN_FILE = '/tmp/%s' % PLATFRM
+                #os.chmod(ZBIN_FILE, 0o777)
+                clim = '%s/%s -m 1 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (BIN_PATH, PLATFRM, filename)
             else:
-                with ZipFile(ZBIN_PATH, 'r') as zbin:
-                    zbin.extract(PLATFRM, path='/tmp', pwd='test')
-                ZBIN_FILE = '/tmp/%s' % PLATFRM
-                os.chmod(ZBIN_FILE, 0o777)
-                clim = '/tmp/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (PLATFRM, filename)
+                #with ZipFile(ZBIN_PATH, 'r') as zbin:
+                 #   zbin.extract(PLATFRM, path='/tmp', pwd='test')
+                #ZBIN_FILE = '/tmp/%s' % PLATFRM
+                #os.chmod(ZBIN_FILE, 0o777)
+                clim = '%s/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (BIN_PATH, PLATFRM, filename)
             #print(clim)
             os.system(clim)
-            os.remove(ZBIN_FILE)
+            #os.remove(ZBIN_FILE)
             return redirect("/u/tmp.png")
     return '''
     <!doctype html>
@@ -88,9 +88,10 @@ def upload_file():
     <h1>Vectorize new File</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
-      <input type=submit value=Upload>
+      <input type=submit value=vectorize>
     </form>
     <h3>It Uses primitive by Michael Fogleman</h3>
+    <h3>Process is long, so you have to wait</h3>
     '''
 
 @app.route("/u/<path:filename>", methods=['GET', 'POST'])
