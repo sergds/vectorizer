@@ -61,7 +61,7 @@ def upload_file():
             im = Image.open("uploads/" + filename)
             h, w = im.size
             im.close()
-            if h > 1920 or w > 1080:
+            if h > 1920 and w > 1080:
                 return "Sorry, max resolution is 1920x1080"
                 
             jn = random.randint(1, 10000000)
@@ -92,7 +92,7 @@ def upload_file():
                  #   zbin.extract(PLATFRM, path='/tmp', pwd='test')
                 #ZBIN_FILE = '/tmp/%s' % PLATFRM
                 #os.chmod(ZBIN_FILE, 0o777)
-                clim = '%s/%s -m 0 -v -n 115 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
+                clim = '%s/%s -m 1 -v -n 120 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
             #print(clim)
             os.system(clim + "&")
             #os.remove(ZBIN_FILE)
