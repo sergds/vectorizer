@@ -94,9 +94,9 @@ def upload_file():
                 #os.chmod(ZBIN_FILE, 0o777)
                 clim = '%s/%s -m 0 -v -n 115 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
             #print(clim)
-            os.system(clim)
+            os.system(clim + "&")
             #os.remove(ZBIN_FILE)
-            return redirect("/u/%s.png" % jn)
+            return redirect("/job/%s/%s/%s" % (jn, h, w))
     return '''
     <!doctype html>
     <title>Vectorizer 3000</title>
@@ -109,6 +109,23 @@ def upload_file():
     <h3>Process is long, so you have to wait</h3>
     <h3>Max resolution is 1920x1080</h3>
     '''
+
+@app.route("/job/<jobid>/<height>/<weight>")
+def retjob(jobid, height, weight):
+    return '''
+    <!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="5" >
+  <title>JOB #%s</title>
+ </head>
+ <body>
+  <h3>Your Image Will Appear soon</h3>
+  <p><img src="/u/%s.png" width="%s" height="%s" alt=""></p>
+ </body>
+</html>
+''' % (jobid, jobid, height, weight)
 
 @app.route("/u/<path:filename>", methods=['GET', 'POST'])
 def download(filename):
