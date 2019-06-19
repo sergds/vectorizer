@@ -3,9 +3,16 @@ import time
 from flask import Flask, flash, request, redirect, send_from_directory
 from werkzeug.utils import secure_filename
 import platform
-import zipfile
-from zipfile import ZipFile
-
+from PIL import Image
+import atexit
+import random
+import shutil
+#import zipfile
+#from zipfile import ZipFile
+@atexit.register
+def cleanuploads():
+    print("Lc: Cleaning up uploads...")
+    shutil.rmtree("uploads")
 rp = os.path.realpath(__file__)
 dirn = os.path.dirname(rp)
 app = Flask(__name__)
@@ -16,8 +23,9 @@ def ensure_dir(dir):
         os.makedirs(dir)
 
 print('Running on %s' % platform.system())
-print('Lc: Cleaning up uploads...')
-os.system('rm -rf %s/uploads/*' % dirn)
+if os.path.exists("uploads"):
+    print('Lc: Cleaning up uploads...')
+    os.system('rm -rf %s/uploads/*' % dirn)
 print('Lc: Done.')
 print('Lc: Initializing app...')
 
@@ -50,6 +58,13 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             #uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
             #return send_from_directory(directory=uploads, filename=filename)
+            im = Image.open("uploads/" + filename)
+            h, w = im.size
+            im.close()
+            if h > 1920 or w > 1080:
+                return "Sorry, max resolution is 1920x1080"
+                
+            jn = random.randint(1, 10000000)
             ARMMODE = 0
             if platform.system() == 'Darwin' :
                 PLATFRM = 'primitive_darwin_amd64'
@@ -71,17 +86,17 @@ def upload_file():
                 #    zbin.extract(PLATFRM, path='/tmp', pwd='test')
                 #ZBIN_FILE = '/tmp/%s' % PLATFRM
                 #os.chmod(ZBIN_FILE, 0o777)
-                clim = '%s/%s -m 1 -v -n 100 -o uploads/tmp.png -i uploads/%s' % (BIN_PATH, PLATFRM, filename)
+                clim = '%s/%s -m 1 -v -n 100 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
             else:
                 #with ZipFile(ZBIN_PATH, 'r') as zbin:
                  #   zbin.extract(PLATFRM, path='/tmp', pwd='test')
                 #ZBIN_FILE = '/tmp/%s' % PLATFRM
                 #os.chmod(ZBIN_FILE, 0o777)
-                clim = '%s/%s -m 0 -v -n 115 -o uploads/tmp.png -i uploads/%s' % (BIN_PATH, PLATFRM, filename)
+                clim = '%s/%s -m 0 -v -n 115 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
             #print(clim)
             os.system(clim)
             #os.remove(ZBIN_FILE)
-            return redirect("/u/tmp.png")
+            return redirect("/u/%s.png" % jn)
     return '''
     <!doctype html>
     <title>Vectorizer 3000</title>
@@ -92,11 +107,12 @@ def upload_file():
     </form>
     <h3>It Uses primitive by Michael Fogleman</h3>
     <h3>Process is long, so you have to wait</h3>
+    <h3>Max resolution is 1920x1080</h3>
     '''
 
 @app.route("/u/<path:filename>", methods=['GET', 'POST'])
 def download(filename):
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(directory=uploads, filename=filename)
-print('Lc: Running app...')
+#print('Lc: Running app...')
 #app.run(host='0.0.0.0', port=5000, debug=False)
