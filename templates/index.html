@@ -1,0 +1,23 @@
+   <!doctype html>
+    <link rel="stylesheet" type="text/css" href="/assets/main.css">
+    <title>Vectorizer 3000</title>
+    <h1>Vectorize new File</h1>
+    <body>
+
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=vectorize>
+    </form>
+              {% with messages = get_flashed_messages() %}
+         {% if messages %}
+            <ul>
+               {% for message in messages %}
+               <li>{{ message }}</li>
+               {% endfor %}
+            </ul>
+         {% endif %}
+      {% endwith %}
+    <h3>It Uses primitive by Michael Fogleman</h3>
+    <h3>Process is long, so you have to wait</h3>
+    <h3>Max resolution is 1920x1080</h3>
+    </body>

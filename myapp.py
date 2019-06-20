@@ -1,14 +1,11 @@
 import os
-import time
-from flask import Flask, flash, request, redirect, send_from_directory
+from flask import Flask, flash, request, redirect, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 import platform
 from PIL import Image
 import atexit
 import random
 import shutil
-#import zipfile
-#from zipfile import ZipFile
 @atexit.register
 def cleanuploads():
     print("Lc: Cleaning up uploads...")
@@ -16,9 +13,8 @@ def cleanuploads():
 rp = os.path.realpath(__file__)
 dirn = os.path.dirname(rp)
 app = Flask(__name__)
-
+app.secret_key = "testok"
 def ensure_dir(dir):
-    #directory = os.path.dirname(file_path)
     if not os.path.exists(dir):
         os.makedirs(dir)
 
@@ -45,89 +41,52 @@ def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
+            flash('ERROR:No file part')
             return redirect(request.url)
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
-            flash('No selected file')
+            flash('ERROR:No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            #uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-            #return send_from_directory(directory=uploads, filename=filename)
             im = Image.open("uploads/" + filename)
             h, w = im.size
             im.close()
             if h > 1920 and w > 1080:
-                return "Sorry, max resolution is 1920x1080"
-                
+                flash("ERROR:Sorry, max resolution is 1920x1080")
+                return redirect(request.url)
             jn = random.randint(1, 10000000)
             ARMMODE = 0
-            if platform.system() == 'Darwin' :
+            if platform.system() == 'Darwin':
                 PLATFRM = 'primitive_darwin_amd64'
-            if platform.system() == 'Linux' :
+            if platform.system() == 'Linux':
                 PLATFRM = 'primitive_linux_amd64'
-            if platform.system() == 'Windows' :
+            if platform.system() == 'Windows':
                 PLATFRM = 'primitive_windows_amd64.exe'
-            if platform.machine() == 'arm' :
+            if platform.machine() == 'arm':
                 ARMMODE = 1
                 PLATFRM = 'primitive_linux_arm'
-            if platform.machine() == 'armv7l' :
+            if platform.machine() == 'armv7l':
                 ARMMODE = 1
                 PLATFRM = 'primitive_linux_arm'
-            if platform.machine() == 'aarch64' :
+            if platform.machine() == 'aarch64':
                 ARMMODE = 1
                 PLATFRM = 'primitive_linux_arm64'
             if ARMMODE == 1:
-                #with ZipFile(ZBIN_PATH, 'r') as zbin:
-                #    zbin.extract(PLATFRM, path='/tmp', pwd='test')
-                #ZBIN_FILE = '/tmp/%s' % PLATFRM
-                #os.chmod(ZBIN_FILE, 0o777)
                 clim = '%s/%s -m 1 -v -n 100 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
             else:
-                #with ZipFile(ZBIN_PATH, 'r') as zbin:
-                 #   zbin.extract(PLATFRM, path='/tmp', pwd='test')
-                #ZBIN_FILE = '/tmp/%s' % PLATFRM
-                #os.chmod(ZBIN_FILE, 0o777)
-                clim = '%s/%s -m 1 -v -n 120 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
-            #print(clim)
+                clim = '%s/%s -m 1 -v -n 145 -o uploads/%s.png -i uploads/%s' % (BIN_PATH, PLATFRM, jn, filename)
             os.system(clim + "&")
-            #os.remove(ZBIN_FILE)
             return redirect("/job/%s/%s/%s" % (jn, h, w))
-    return '''
-    <!doctype html>
-    <link rel="stylesheet" type="text/css" href="/assets/main.css">
-    <title>Vectorizer 3000</title>
-    <h1>Vectorize new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=vectorize>
-    </form>
-    <h3>It Uses primitive by Michael Fogleman</h3>
-    <h3>Process is long, so you have to wait</h3>
-    <h3>Max resolution is 1920x1080</h3>
-    '''
+    return render_template('index.html')
 
-@app.route("/job/<jobid>/<height>/<weight>")
-def retjob(jobid, height, weight):
-    return '''
-    <!DOCTYPE HTML>
-<html>
- <head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" type="text/css" href="/assets/main.css">
-  <meta http-equiv="refresh" content="5" >
-  <title>JOB #%s</title>
- </head>
- <body>
-  <h3>Your Image Will Appear soon</h3>
-  <p><img src="/u/%s.png" width="%s" height="%s" alt=""></p>
- </body>
-</html>
-''' % (jobid, jobid, height, weight)
+@app.route("/job/<jobid>/<height>/<width>") #(jobid, height, width)
+def retjob(jobid, height, width):
+    return render_template('job.html', jobid=jobid, height=height, width=width)
+
 
 @app.route("/u/<path:filename>", methods=['GET', 'POST'])
 def download(filename):
@@ -136,5 +95,3 @@ def download(filename):
 @app.route("/assets/<path:filename>", methods=['GET', 'POST'])
 def assetl(filename):
     return send_from_directory(directory="assets", filename=filename)
-#print('Lc: Running app...')
-#app.run(host='0.0.0.0', port=5000, debug=False)
