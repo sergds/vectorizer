@@ -99,6 +99,7 @@ def upload_file():
             return redirect("/job/%s/%s/%s" % (jn, h, w))
     return '''
     <!doctype html>
+    <link rel="stylesheet" type="text/css" href="/assets/main.css">
     <title>Vectorizer 3000</title>
     <h1>Vectorize new File</h1>
     <form method=post enctype=multipart/form-data>
@@ -117,6 +118,7 @@ def retjob(jobid, height, weight):
 <html>
  <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="/assets/main.css">
   <meta http-equiv="refresh" content="5" >
   <title>JOB #%s</title>
  </head>
@@ -131,5 +133,8 @@ def retjob(jobid, height, weight):
 def download(filename):
     uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(directory=uploads, filename=filename)
+@app.route("/assets/<path:filename>", methods=['GET', 'POST'])
+def assetl(filename):
+    return send_from_directory(directory="assets", filename=filename)
 #print('Lc: Running app...')
 #app.run(host='0.0.0.0', port=5000, debug=False)
