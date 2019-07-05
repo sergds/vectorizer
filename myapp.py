@@ -8,8 +8,9 @@ import random
 import shutil
 @atexit.register
 def cleanuploads():
-    print("Lc: Cleaning up uploads...")
-    shutil.rmtree("uploads")
+	if os.path.exists("uploads"):
+    	print("Lc: Cleaning up uploads...")
+    	shutil.rmtree("uploads")
 rp = os.path.realpath(__file__)
 dirn = os.path.dirname(rp)
 app = Flask(__name__)
@@ -19,11 +20,6 @@ def ensure_dir(dir):
         os.makedirs(dir)
 
 print('Running on %s' % platform.system())
-if os.path.exists("uploads"):
-    print('Lc: Cleaning up uploads...')
-    os.system('rm -rf %s/uploads/*' % dirn)
-print('Lc: Done.')
-print('Lc: Initializing app...')
 
 # SETTINGS
 BIN_PATH = '%s/bin' % dirn
