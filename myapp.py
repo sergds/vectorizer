@@ -9,8 +9,8 @@ import shutil
 @atexit.register
 def cleanuploads():
 	if os.path.exists("uploads"):
-    	print("Lc: Cleaning up uploads...")
-    	shutil.rmtree("uploads")
+          print("Lc: Cleaning up uploads...")
+          shutil.rmtree("uploads")
 rp = os.path.realpath(__file__)
 dirn = os.path.dirname(rp)
 app = Flask(__name__)
